@@ -1,0 +1,12 @@
+{
+  "solution": {
+    "path": "ToDo.sln",
+    "projects": [
+      "ToDo.Application\\ToDo.Application.csproj",
+      "ToDo.Domain\\ToDo.Domain.csproj",
+      "ToDo.Persistence\\ToDo.Persistence.csproj",
+      "ToDo.Shared\\ToDo.Shared.csproj",
+      "ToDo.WebAPI\\ToDo.WebAPI.csproj"
+    ]
+  }
+}
