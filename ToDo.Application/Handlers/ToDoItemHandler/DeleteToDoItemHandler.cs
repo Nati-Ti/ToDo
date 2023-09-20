@@ -48,46 +48,19 @@ namespace ToDo.Application.Handlers.ToDoItemHandler
 
             updateToDoList.Title = toDoList.Title;
             updateToDoList.Value = toDoList.Value;
-            updateToDoList.Percentage = (totalProgress / totalValue) * 100;
+
+            if (toDoList.Items.Count == 0)
+            {
+                updateToDoList.Percentage = 0;
+            }
+            else
+            {       
+                updateToDoList.Percentage = (totalProgress / totalValue) * 100;
+            }
+            
 
             await _repositoryList.UpdateToDoList(updateToDoList);
         }
-
-
-
-
-
-        //public async Task Handle(DeleteToDoItemCommand command, CancellationToken cancellationToken)
-        //{
-        //    var inputId = command.Id;
-        //    var item = await _repository.GetToDoItem(inputId);
-        //    var toDoList = await _repositoryList.GetToDoList(item.ToDoId);
-
-        //    if (item == null)
-        //    {
-        //        throw new KeyNotFoundException("The specified ToDo List was not found.");
-        //    }
-
-        //    await _repository.DeleteToDoItem(item);
-
-        //    var allItems = await _repository.GetAllToDoItems();
-
-        //    var listItems = allItems.Where(p => p.ToDoId == item.ToDoId);
-
-        //    var totalProgress = listItems.Sum(i => i.Progress);
-        //    var totalValue = listItems.Sum(i => i.Value);
-
-
-        //    var updateToDoList = new ToDoList
-        //    {
-        //        Id = item.ToDoId,
-        //        Title = toDoList.Title,
-        //        Value = totalValue,
-        //        Percentage = (totalProgress / totalValue) * 100
-        //    };
-
-        //    await _repositoryList.UpdateToDoList(updateToDoList);
-        //}
 
 
 

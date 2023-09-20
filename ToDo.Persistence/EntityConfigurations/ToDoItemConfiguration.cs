@@ -30,16 +30,9 @@ namespace ToDo.Persistence.EntityConfigurations
             builder.Property(t => t.ToDoId)
                 .IsRequired(); 
 
-
-            //builder.Property(e => e.CreatedAt)
-            //       .HasComputedColumnSql("CURRENT_TIMESTAMP")
-            //       .ValueGeneratedOnAdd();
-
-
             builder.HasOne(t => t.ToDo)
                 .WithMany(l => l.Items)
-                .HasForeignKey(t => t.ToDoId)
-                .OnDelete(DeleteBehavior.Cascade); 
+                .HasForeignKey(t => t.ToDoId); 
         }
     }
 }
