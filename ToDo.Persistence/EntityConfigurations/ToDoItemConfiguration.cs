@@ -14,7 +14,10 @@ namespace ToDo.Persistence.EntityConfigurations
 
             builder.Property(t => t.Title)
                 .IsRequired()
-                .HasMaxLength(150); 
+                .HasMaxLength(150);
+
+            builder.HasIndex(p => p.Title)
+                .IsUnique();
 
             builder.Property(t => t.Value)
                 .IsRequired(); 

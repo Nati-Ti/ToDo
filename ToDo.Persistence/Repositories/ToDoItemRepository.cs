@@ -22,6 +22,21 @@ namespace ToDo.Persistence.Repositories
             return await _dbContext.ToDoItems.FindAsync(Id);
         }
 
+        public async Task<bool> titleCheckItem(Guid Id, string Title)
+        {
+            return await _dbContext.ToDoItems.FirstOrDefaultAsync(p => p.ToDoId == Id && p.Title == Title) != null;
+        }
+
+        public async Task<int> sumOfValues(Guid Id)
+        {
+            return await _dbContext.ToDoItems.Where(p => p.ToDoId == Id).SumAsync(p => p.Value);
+        }
+
+        public async Task<decimal> sumOfProgress(Guid Id)
+        {
+            return await _dbContext.ToDoItems.Where(p => p.ToDoId == Id).SumAsync(p => p.Progress);
+        }
+
         public async Task<ToDoItem> CreateToDoItem(ToDoItem toDoItem)
         {
             _dbContext.ToDoItems.Add(toDoItem);

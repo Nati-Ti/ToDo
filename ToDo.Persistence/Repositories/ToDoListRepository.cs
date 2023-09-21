@@ -27,6 +27,11 @@ namespace ToDo.Persistence.Repositories
             return await _dbContext.ToDoItems.Where(p => p.ToDoId == Id).ToListAsync();
         }
 
+        public async Task<bool> titleCheck(string Title)
+        {
+            return await _dbContext.ToDoLists.FirstOrDefaultAsync(p => p.Title == Title) != null;           
+        }
+
         public async Task<ToDoList> CreateToDoList(ToDoList toDoList)
         {
             _dbContext.ToDoLists.Add(toDoList);
@@ -45,13 +50,6 @@ namespace ToDo.Persistence.Repositories
             _dbContext.ToDoLists.Remove(toDoList);
             await _dbContext.SaveChangesAsync();
         }
-
-        //public async Task UpdateListOnCreateItem(Guid Id, UpdateListOnCreateItem toDoList)
-        //{
-        //    _dbContext.ToDoLists.Update(toDoList);
-        //    await _dbContext.SaveChangesAsync();
-        //}
-
 
     }
 }

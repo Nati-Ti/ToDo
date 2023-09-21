@@ -40,11 +40,7 @@ namespace ToDo.Application.Handlers.ToDoItemHandler
                 throw new InvalidOperationException("Invalid ToDoId. The specified ToDoId or ToDoList doesn't exist.");
             }
 
-            var allItems = await _repository.GetAllToDoItems();
-
-            var itemsOfList = allItems.Where(p => p.ToDoId ==  inputToDoItem.ToDoId);
-            
-            var sumOfValue = itemsOfList.Sum(p => p.Value);
+            var sumOfValue = await _repository.sumOfValues(toDoList.Id);
             
             if (toDoItem.Value > (toDoList.Value - sumOfValue))
             {
@@ -52,16 +48,16 @@ namespace ToDo.Application.Handlers.ToDoItemHandler
                     " the ToDo List cannot exceed the ToDoList Value");
             }
 
-            var existItem = allItems.Any(p => p.Title == inputToDoItem.Title);
+            var existItem = await _repository.titleCheckItem(inputToDoItem.ToDoId, inputToDoItem.Title);
 
-            if (existItem)
+            if (existItem == true)
             {
                 throw new InvalidOperationException("ToDo Item already exists.");
             }
 
             var createToDoItem = await _repository.CreateToDoItem(inputToDoItem);
 
-            await UpdateToDoList(createToDoItem.Id);
+            await UpdateToDoList(createToDoItem.ToDoId);
 
             return new CreateToDoItem
             {
@@ -75,45 +71,23 @@ namespace ToDo.Application.Handlers.ToDoItemHandler
 
         public async Task UpdateToDoList(Guid Id)
         {
-            //Checks if the Item is found
-            //Checks if the ToDo List is found
-            //Calculates the Total Value and Total Progress from all the items within the List
-            //Update the ToDo List
+            // Checks if the ToDo List is found
+            // Calculates the Total Value and Total Progress from all the items within the List
+            // Update the ToDo List
 
-            var item = await _repository.GetToDoItem(Id);
-            if (item == null)
-            {
-                throw new InvalidOperationException("Specified item was not found.");
-            }
 
-            //var toDoList = await _repositoryList.GetToDoList(item.ToDoId);
-            var toDoList = item.ToDo;
-
+            var toDoList = await _repositoryList.GetToDoList(Id); ;
             if (toDoList == null)
             {
                 throw new InvalidOperationException("Specified toDoList was not found.");
             }
 
-            var allItems = await _repository.GetAllToDoItems();
-            var listItems = allItems.Where(p => p.ToDoId == item.ToDoId).ToList();
+            var totalProgress = await _repository.sumOfProgress(Id);
+            var totalValue = await _repository.sumOfValues(Id);
 
-            var totalProgress = listItems.Sum(i => i.Progress);
-            var totalValue = listItems.Sum(i => i.Value);
+            toDoList.Percentage = (totalProgress / totalValue) * 100;
 
-
-            //var updateToDoList = await _repositoryList.GetToDoList(item.ToDoId);
-            var updateToDoList = item.ToDo;
-
-            if (updateToDoList == null)
-            {
-                throw new InvalidOperationException("Specified toDoList was not found.");
-            }
-
-            updateToDoList.Title = toDoList.Title;
-            updateToDoList.Value = toDoList.Value;
-            updateToDoList.Percentage = (totalProgress / totalValue) * 100;
-
-            await _repositoryList.UpdateToDoList(updateToDoList);
+            await _repositoryList.UpdateToDoList(toDoList);
         }
 
 

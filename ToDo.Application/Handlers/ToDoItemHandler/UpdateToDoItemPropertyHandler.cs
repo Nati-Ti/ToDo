@@ -5,6 +5,7 @@ using ToDo.Persistence.Repositories;
 
 namespace ToDo.Application.Handlers.ToDoItemHandler
 {
+
     public class UpdateToDoItemPropertyHandler : IRequestHandler<UpdateToDoItemPropertyCommand>
     {
         private readonly ToDoItemRepository _repository;
@@ -15,7 +16,6 @@ namespace ToDo.Application.Handlers.ToDoItemHandler
             _repository = repository;
             _repositoryList = repositoryList;
         }
-
 
         public async Task Handle(UpdateToDoItemPropertyCommand command, CancellationToken cancellationToken)
         {
@@ -34,15 +34,6 @@ namespace ToDo.Application.Handlers.ToDoItemHandler
                 throw new KeyNotFoundException("The specified ToDo Item was not found.");
             }
 
-            //var itemsInToDoList = toDoItem.ToDo.Items;
-
-            var itemsInToDoList = await _repositoryList.GetItemsOfToDoList(inputUpdate.ToDoId);
-            itemsInToDoList.RemoveAll(p => p.Id == inputId);
-
-            if (itemsInToDoList.Any(p => p.Title == inputUpdate.Title))
-            {
-                throw new InvalidOperationException("Invalid Title. The specified ToDo Item already exists.");
-            }
 
             var toDoList = await _repositoryList.GetToDoList(inputUpdate.ToDoId);
 
@@ -51,39 +42,33 @@ namespace ToDo.Application.Handlers.ToDoItemHandler
                 throw new InvalidOperationException("Invalid ToDoId. The specified ToDoId or ToDoList doesn't exist.");
             }
 
-            var updateToDoItem = await _repository.GetToDoItem(inputId);
+            var newTitle = await _repository.titleCheckItem(inputUpdate.ToDoId, inputUpdate.Title);
 
-            if (updateToDoItem == null)
+            if (newTitle == true)
             {
-                throw new InvalidOperationException("The specified ToDo Item was not found.");
+                throw new InvalidOperationException("Invalid Title. The specified ToDo Item already exists.");
             }
 
-            updateToDoItem.Title = inputUpdate.Title;
-            updateToDoItem.Value = inputUpdate.Value;
-            updateToDoItem.ToDoId = inputUpdate.ToDoId;
-            
 
-            await _repository.UpdateToDoItem(updateToDoItem);
+            var sumOfValue = await _repository.sumOfValues(inputUpdate.ToDoId);
+
+            if (inputUpdate.Value > (toDoList.Value - sumOfValue + toDoItem.Value))
+            {
+                throw new InvalidOperationException("Invalid ToDoItem Value. The sum of all Items value within" +
+                    " the ToDo List cannot exceed the ToDoList Value");
+            }
+
+            toDoItem.Title = inputUpdate.Title;
+            toDoItem.Value = inputUpdate.Value;
+            toDoItem.ToDoId = inputUpdate.ToDoId;
+
+
+            await _repository.UpdateToDoItem(toDoItem);
 
 
 
-            
+
         }
-
-
     }
 }
-
-
-
-
-
-
-
-//{
-//    "id": "e3a93cd8-0618-4b8c-9aad-a3119353cb5d",
-//  "title": "Mathematics",
-//  "toDoId": "8f14606b-dc7c-429e-aea4-3938ae13f890",
-//  "value": 45
-//}
 

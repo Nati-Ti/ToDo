@@ -27,14 +27,14 @@ namespace ToDo.Application.Handlers.ToDoListHandler
                 throw new KeyNotFoundException("The specified ToDo List was not found.");
             }
 
-            var allLists = await _repository.GetAllToDoLists();
+            var allLists = await _repository.titleCheck(toDoInput.Title);
 
-            if (updateToDoList.Title != toDoInput.Title && allLists.Any(p => p.Title == toDoInput.Title))
+            if (allLists == true)
             {
                 throw new InvalidOperationException("Invalid Title. The specified ToDo List already exists.");
             }
 
-            
+          
             updateToDoList.Title = toDoInput.Title;
             updateToDoList.Value = toDoInput.Value;
 
@@ -51,50 +51,6 @@ namespace ToDo.Application.Handlers.ToDoListHandler
 
             return updatedReturn;
         }
-
-
-
-
-        //public async Task<GetStatus> Handle(UpdateToDoListCommand command, CancellationToken cancellationToken)
-        //{
-        //    var toDo = command.Id;
-        //    var toDoInput = command.inputToDoList;
-
-        //    var allLists = await _repository.GetAllToDoLists();
-        //    var toDoList = allLists.FirstOrDefault(p => p.Id == toDo);
-
-        //    var updateToDoList = new ToDoList
-        //    {
-        //        Id = toDo,
-        //        Title = toDoInput.Title
-        //    };
-
-        //    if (toDoList == null)
-        //    {
-        //        throw new KeyNotFoundException("The specified ToDo List was not found.");
-        //    }
-
-        //    if (allLists.Any(p => p.Title == toDoInput.Title))
-        //    {
-        //        throw new InvalidOperationException("Invalid Title. The specified ToDo List already exists.");
-        //    }
-
-        //    await _repository.UpdateToDoList(updateToDoList);
-        //    var updatedReturn = new GetStatus
-        //    {
-        //        Id = updateToDoList.Id,
-        //        Title = updateToDoList.Title,
-        //        Value = toDoList.Value,
-        //        Percentage = toDoList.Percentage
-        //    };
-        //    //inputToDoList.Value = toDoList.Value;
-        //    //inputToDoList.Percentage = toDoList.Percentage;
-
-        //    return updatedReturn;
-        //}
-
-
-
 
     }
 }

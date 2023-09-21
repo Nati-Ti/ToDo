@@ -26,15 +26,14 @@ namespace ToDo.Application.Handlers.ToDoListHandler
                 Value = toDoList.Value
             };
 
-            var allLists = await _repository.GetAllToDoLists();
-            var existList = allLists.Any(p => p.Title == inputToDoList.Title);
+            var existList = await _repository.titleCheck(toDoList.Title);
 
             if (existList == true)
             {
                 throw new InvalidOperationException("ToDo List already exists.");
             }
 
-            var createToDoList = await _repository.CreateToDoList(inputToDoList);
+            await _repository.CreateToDoList(inputToDoList);
 
             toDoList.Id = inputToDoList.Id;
 

@@ -11,7 +11,6 @@ namespace ToDo.Domain.Models
         public Guid ToDoId { get; set; }
         public ToDoList ToDo { get; set; }
 
-        //public DateTime CreatedAt { get; set; }
 
     }
 }

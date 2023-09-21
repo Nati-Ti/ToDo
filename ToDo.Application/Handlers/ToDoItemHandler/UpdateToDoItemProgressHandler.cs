@@ -54,7 +54,7 @@ namespace ToDo.Application.Handlers.ToDoItemHandler
 
             await _repository.UpdateToDoItem(updateToDoItem);
 
-            await UpdateToDoList(inputId);
+            await UpdateToDoList(item.ToDoId);
 
             var returnItem = new GetItemStatus
             {
@@ -62,7 +62,7 @@ namespace ToDo.Application.Handlers.ToDoItemHandler
                 Title = item.Title,
                 Value = item.Value,
                 Progress = input.Progress,
-                Percentage = (input.Progress / item.Value) * 100
+                Percentage = updateToDoItem.Percentage
             };
 
             return returnItem;
@@ -70,42 +70,65 @@ namespace ToDo.Application.Handlers.ToDoItemHandler
 
         public async Task UpdateToDoList(Guid Id)
         {
-            //Checks if the Item is found
-            //Checks if the ToDo List is found
-            //Calculates the Total Value and Total Progress from all the items within the List
-            //Update the ToDo List
+            // Checks if the ToDo List is found
+            // Calculates the Total Value and Total Progress from all the items within the List
+            // Update the ToDo List
 
-            var item = await _repository.GetToDoItem(Id);
-            if (item == null)
-            {
-                throw new InvalidOperationException("Specified item was not found.");
-            }
 
-            var toDoList = await _repositoryList.GetToDoList(item.ToDoId);
+            var toDoList = await _repositoryList.GetToDoList(Id); ;
             if (toDoList == null)
             {
                 throw new InvalidOperationException("Specified toDoList was not found.");
             }
 
-            var allItems = await _repository.GetAllToDoItems();
-            var listItems = allItems.Where(p => p.ToDoId == item.ToDoId).ToList();  
+            var totalProgress = await _repository.sumOfProgress(Id);
+            var totalValue = await _repository.sumOfValues(Id);
 
-            var totalProgress = listItems.Sum(i => i.Progress);
-            var totalValue = listItems.Sum(i => i.Value);
+            toDoList.Title = toDoList.Title;
+            toDoList.Value = toDoList.Value;
+            toDoList.Percentage = (totalProgress / totalValue) * 100;
 
-
-            var updateToDoList = await _repositoryList.GetToDoList(item.ToDoId);
-
-            if (updateToDoList == null)
-            {
-                throw new InvalidOperationException("Specified toDoList was not found.");
-            }
-
-            updateToDoList.Title = toDoList.Title;
-            updateToDoList.Value = toDoList.Value;
-            updateToDoList.Percentage = (totalProgress / totalValue) * 100;
-
-            await _repositoryList.UpdateToDoList(updateToDoList);
+            await _repositoryList.UpdateToDoList(toDoList);
         }
+
+        //public async task updatetodolist(guid id)
+        //{
+        //    //checks if the item is found
+        //    //checks if the todo list is found
+        //    //calculates the total value and total progress from all the items within the list
+        //    //update the todo list
+
+        //    var item = await _repository.gettodoitem(id);
+        //    if (item == null)
+        //    {
+        //        throw new invalidoperationexception("specified item was not found.");
+        //    }
+
+        //    var todolist = await _repositorylist.gettodolist(item.todoid);
+        //    if (todolist == null)
+        //    {
+        //        throw new invalidoperationexception("specified todolist was not found.");
+        //    }
+
+        //    var allitems = await _repository.getalltodoitems();
+        //    var listitems = allitems.where(p => p.todoid == item.todoid).tolist();
+
+        //    var totalprogress = listitems.sum(i => i.progress);
+        //    var totalvalue = listitems.sum(i => i.value);
+
+
+        //    var updatetodolist = await _repositorylist.gettodolist(item.todoid);
+
+        //    if (updatetodolist == null)
+        //    {
+        //        throw new invalidoperationexception("specified todolist was not found.");
+        //    }
+
+        //    updatetodolist.title = todolist.title;
+        //    updatetodolist.value = todolist.value;
+        //    updatetodolist.percentage = (totalprogress / totalvalue) * 100;
+
+        //    await _repositorylist.updatetodolist(updatetodolist);
+        //}
     }
 }
