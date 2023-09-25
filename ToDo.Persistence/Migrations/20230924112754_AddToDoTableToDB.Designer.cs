@@ -12,8 +12,8 @@ using ToDo.Persistence.Data;
 namespace ToDo.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230906162114_AddToDoTableToDb")]
-    partial class AddToDoTableToDb
+    [Migration("20230924112754_AddToDoTableToDB")]
+    partial class AddToDoTableToDB
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -49,6 +49,9 @@ namespace ToDo.Persistence.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Title")
+                        .IsUnique();
 
                     b.HasIndex("ToDoId");
 

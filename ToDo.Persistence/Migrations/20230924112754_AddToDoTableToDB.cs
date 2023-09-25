@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ToDo.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class AddToDoTableToDb : Migration
+    public partial class AddToDoTableToDB : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -46,6 +46,12 @@ namespace ToDo.Persistence.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ToDoItems_Title",
+                table: "ToDoItems",
+                column: "Title",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_ToDoItems_ToDoId",

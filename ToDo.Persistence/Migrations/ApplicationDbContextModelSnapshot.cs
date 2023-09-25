@@ -47,6 +47,9 @@ namespace ToDo.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Title")
+                        .IsUnique();
+
                     b.HasIndex("ToDoId");
 
                     b.ToTable("ToDoItems", (string)null);
