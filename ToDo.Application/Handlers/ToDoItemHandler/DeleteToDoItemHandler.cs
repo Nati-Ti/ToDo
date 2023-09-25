@@ -30,7 +30,7 @@ namespace ToDo.Application.Handlers.ToDoItemHandler
             }
 
             var toDoList = await _repositoryList.GetToDoList(item.ToDoId);
-            var emptyList = await _repositoryList.GetItemsOfToDoList(item.ToDoId);
+            // var emptyList = await _repositoryList.GetItemsOfToDoList(item.ToDoId);
 
             await _repository.DeleteToDoItem(item);
 
