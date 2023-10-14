@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ToDo.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class AddToDoTableToDB : Migration
+    public partial class AddToDoTableToDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
